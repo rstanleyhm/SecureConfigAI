@@ -1,0 +1,287 @@
+{
+  "rules": [
+    {
+      "id": "R001",
+      "description": "Debug mode is enabled.",
+      "match_key": "debug",
+      "match_value": "true",
+      "severity": "high"
+    },
+    {
+      "id": "R002",
+      "description": "Weak password detected.",
+      "match_key": "password",
+      "match_value": [
+        "12345",
+        "password",
+        "admin"
+      ],
+      "severity": "critical"
+    },
+    {
+      "id": "R003",
+      "description": "Broadly permissive allowed_hosts setting detected.",
+      "match_key": "allowed_hosts",
+      "match_value": "*",
+      "severity": "medium"
+    },
+    {
+      "id": "R004",
+      "description": "Sensitive information exposed in configuration file.",
+      "match_key": "api_key",
+      "severity": "critical"
+    },
+    {
+      "id": "R005",
+      "description": "Exposed admin credentials in configuration.",
+      "match_key": "admin_credentials",
+      "severity": "critical"
+    },
+    {
+      "id": "R006",
+      "description": "Hardcoded secret keys found in configuration file.",
+      "match_key": "secret_key",
+      "severity": "critical"
+    },
+    {
+      "id": "R007",
+      "description": "Open database connection without encryption.",
+      "match_key": "db_connection",
+      "match_value": "plaintext",
+      "severity": "high"
+    },
+    {
+      "id": "R008",
+      "description": "Unrestricted access to sensitive endpoints.",
+      "match_key": "allowed_endpoints",
+      "match_value": "*",
+      "severity": "high"
+    },
+    {
+      "id": "R009",
+      "description": "Unencrypted sensitive data in configuration.",
+      "match_key": "sensitive_data",
+      "match_value": "true",
+      "severity": "critical"
+    },
+    {
+      "id": "R010",
+      "description": "Insecure default credentials in configuration.",
+      "match_key": "username",
+      "match_value": [
+        "admin",
+        "root",
+        "user"
+      ],
+      "severity": "critical"
+    },
+    {
+      "id": "R011",
+      "description": "Non-restrictive CORS configuration.",
+      "match_key": "cors",
+      "match_value": "*",
+      "severity": "medium"
+    },
+    {
+      "id": "R012",
+      "description": "Open AWS S3 buckets detected.",
+      "match_key": "s3_bucket",
+      "match_value": "public",
+      "severity": "critical"
+    },
+    {
+      "id": "R013",
+      "description": "TLS/SSL certificate not configured or expired.",
+      "match_key": "ssl_certificate",
+      "match_value": "expired",
+      "severity": "high"
+    },
+    {
+      "id": "R014",
+      "description": "No IP whitelisting on sensitive services.",
+      "match_key": "ip_whitelist",
+      "match_value": "false",
+      "severity": "high"
+    },
+    {
+      "id": "R015",
+      "description": "Log files contain sensitive data.",
+      "match_key": "log_level",
+      "match_value": "debug",
+      "severity": "medium"
+    },
+    {
+      "id": "R016",
+      "description": "Exposed file paths without access controls.",
+      "match_key": "file_paths",
+      "severity": "high"
+    },
+    {
+      "id": "R017",
+      "description": "Unnecessary ports open in configuration.",
+      "match_key": "open_ports",
+      "match_value": "*",
+      "severity": "medium"
+    },
+    {
+      "id": "R018",
+      "description": "Insecure HTTP headers found.",
+      "match_key": "http_headers",
+      "match_value": [
+        "X-Powered-By",
+        "Server",
+        "X-Content-Type-Options: nosniff"
+      ],
+      "severity": "medium"
+    },
+    {
+      "id": "R019",
+      "description": "Using outdated dependencies in configuration.",
+      "match_key": "dependencies",
+      "match_value": [
+        "vulnerable_version"
+      ],
+      "severity": "high"
+    },
+    {
+      "id": "R020",
+      "description": "Cross-site scripting (XSS) vulnerability detected.",
+      "match_key": "xss_protection",
+      "match_value": "false",
+      "severity": "high"
+    },
+    {
+      "id": "R021",
+      "description": "Too broad file system permissions.",
+      "match_key": "file_permissions",
+      "match_value": "777",
+      "severity": "critical"
+    },
+    {
+      "id": "R022",
+      "description": "Missing or misconfigured firewall rules.",
+      "match_key": "firewall",
+      "match_value": "disabled",
+      "severity": "high"
+    },
+    {
+      "id": "R023",
+      "description": "Unnecessary services enabled in configuration.",
+      "match_key": "enabled_services",
+      "match_value": "*",
+      "severity": "medium"
+    },
+    {
+      "id": "R024",
+      "description": "Database connection string is exposed in the configuration.",
+      "match_key": "db_connection_string",
+      "severity": "critical"
+    },
+    {
+      "id": "R025",
+      "description": "Misconfigured logging level, exposing sensitive data.",
+      "match_key": "log_level",
+      "match_value": "debug",
+      "severity": "medium"
+    },
+    {
+      "id": "R026",
+      "description": "Sensitive environment variables exposed.",
+      "match_key": "env_vars",
+      "severity": "critical"
+    },
+    {
+      "id": "R027",
+      "description": "Uncontrolled third-party API access.",
+      "match_key": "third_party_apis",
+      "match_value": "true",
+      "severity": "high"
+    },
+    {
+      "id": "R028",
+      "description": "Cloud storage permissions are too permissive.",
+      "match_key": "cloud_storage_permissions",
+      "match_value": "*",
+      "severity": "high"
+    },
+    {
+      "id": "R029",
+      "description": "Logging configuration does not sanitize user inputs.",
+      "match_key": "log_sanitize",
+      "match_value": "false",
+      "severity": "medium"
+    },
+    {
+      "id": "R030",
+      "description": "Insecure or outdated cryptographic algorithms used.",
+      "match_key": "encryption_algorithm",
+      "match_value": [
+        "MD5",
+        "SHA1"
+      ],
+      "severity": "high"
+    },
+    {
+      "id": "R031",
+      "description": ".env file exposed in version control.",
+      "match_key": ".env",
+      "severity": "critical"
+    },
+    {
+      "id": "R032",
+      "description": ".env file not included in .gitignore.",
+      "match_key": ".gitignore",
+      "match_value": ".env",
+      "severity": "critical"
+    },
+    {
+      "id": "R033",
+      "description": "AWS access keys exposed in .env file.",
+      "match_key": "AWS_ACCESS_KEY_ID",
+      "severity": "critical"
+    },
+    {
+      "id": "R034",
+      "description": "Database credentials exposed in .env file.",
+      "match_key": "DB_PASSWORD",
+      "severity": "critical"
+    },
+    {
+      "id": "R035",
+      "description": "API keys exposed in .env file.",
+      "match_key": "API_KEY",
+      "severity": "critical"
+    },
+    {
+      "id": "R036",
+      "description": "Sensitive data exposed in YAML configuration.",
+      "match_key": ["password", "api_key", "AWS_ACCESS_KEY_ID"],
+      "severity": "critical"
+    },
+    {
+      "id": "R037",
+      "description": "Sensitive data exposed in JSON configuration.",
+      "match_key": ["password", "api_key", "AWS_ACCESS_KEY_ID"],
+      "severity": "critical"
+    },
+    {
+      "id": "R038",
+      "description": "TLS/SSL certificate misconfiguration or expiration.",
+      "match_key": "ssl_certificate",
+      "match_value": "expired",
+      "severity": "high"
+    },
+    {
+      "id": "R039",
+      "description": "Exposed admin credentials in configuration file.",
+      "match_key": ["admin_user", "admin_password"],
+      "severity": "critical"
+    },
+    {
+      "id": "R040",
+      "description": "Sensitive information exposed in YAML configuration file.",
+      "match_key": ["api_key", "password", "secret_key"],
+      "severity": "critical"
+    }
+  ]
+}
