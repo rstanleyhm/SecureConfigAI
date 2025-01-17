@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"  # Map Flask's port to localhost
+    volumes:
+      - .:/app       # Mount local files for development
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"  # Map Redis's port to localhost
