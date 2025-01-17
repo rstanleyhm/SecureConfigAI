@@ -1,17 +1,22 @@
 import json
 import yaml
+import logging
 from flask import Blueprint, request, jsonify
 from dotenv import load_dotenv
 from app.utils.rules_loader import load_rules
+from app.api.scan import parse_file, scan_file
 import os
+from app.api.custom_logging import log_findings
+
+scan_api = Blueprint("scan_api", __name__)
 
 
 def check_security(file_path, file_type, rules):
-    if file_type == 'json':
+    if file_type == "json":
         file_data = load_json(file_path)
-    elif file_type == 'yaml':
+    elif file_type == "yaml":
         file_data = load_yaml(file_path)
-    elif file_type == 'env':
+    elif file_type == "env":
         file_data = load_env(file_path)
     else:
         raise ValueError(f"Unsupported file type: {file_type}")
@@ -20,39 +25,45 @@ def check_security(file_path, file_type, rules):
 
     return findings
 
+
 def load_env(file_path):
     load_dotenv(file_path)
     return dict(os.environ)
 
+
 def load_json(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         return json.load(file)
+
 
 def load_rules():
     import os
+
     rules_file = os.path.join("data", "rules.json")
     if not os.path.exists(rules_file):
         raise FileNotFoundError(f"Rules file not found at {rules_file}")
     with open(rules_file, "r") as file:
         return json.load(file)["rules"]
 
+
 def load_yaml(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         return yaml.safe_load(file)
 
+
 def parse_file(filepath):
-    ext = filepath.rsplit('.', 1)[1].lower()
-    with open(filepath, 'r') as file:
+    ext = filepath.rsplit(".", 1)[1].lower()
+    with open(filepath, "r") as file:
         try:
-            if ext == 'json':
+            if ext == "json":
                 return json.load(file), None
-            elif ext == 'yaml':
+            elif ext == "yaml":
                 return yaml.safe_load(file), None
-            elif ext == 'env':
+            elif ext == "env":
                 content = {}
                 for line in file:
-                    if line.strip() and not line.startswith('#'):
-                        key, value = line.strip().split('=', 1)
+                    if line.strip() and not line.startswith("#"):
+                        key, value = line.strip().split("=", 1)
                         content[key] = value
                 return content, None
         except Exception as e:
@@ -64,7 +75,9 @@ def scan_file(file_data, rules):
     findings = []
 
     # Normalize file_data keys to lowercase
-    normalized_data = {key.lower(): str(value).lower() for key, value in file_data.items()}
+    normalized_data = {
+        key.lower(): str(value).lower() for key, value in file_data.items()
+    }
 
     for rule in rules:
         match_key = rule["match_key"]
@@ -77,7 +90,9 @@ def scan_file(file_data, rules):
             keys_to_check = [key.lower() for key in match_key]
             matched_keys = [key for key in keys_to_check if key in normalized_data]
         else:
-            matched_keys = [match_key.lower()] if match_key.lower() in normalized_data else []
+            matched_keys = (
+                [match_key.lower()] if match_key.lower() in normalized_data else []
+            )
 
         for matched_key in matched_keys:
             file_value = normalized_data[matched_key]
@@ -91,21 +106,42 @@ def scan_file(file_data, rules):
 
     return findings
 
-scan_api = Blueprint('scan_api', __name__)
 
-@scan_api.route('/scan', methods=['POST'])
+def validate_scan_request(func):
+    def wrapper(*args, **kwargs):
+        filepath = request.json.get("filepath")
+        if not filepath:
+            logging.error("Filepath is missing in the request.")
+            return jsonify({"error": "Filepath is missing"}), 400
+        if not os.path.exists(filepath):
+            logging.error(f"File not found: {filepath}")
+            return jsonify({"error": "File not found"}), 400
+        return func(*args, **kwargs)
+
+    wrapper.__name__ = func.__name__
+    return wrapper
+
+
+@scan_api.route("/scan", methods=["POST"])
+@validate_scan_request
 def scan():
-    filepath = request.json.get('filepath')
-    if not filepath or not os.path.exists(filepath):
-        return jsonify({"error": "File not found"}), 400
+    filepath = request.json.get("filepath")
 
     content, error = parse_file(filepath)
     if error:
+        logging.error(f"Error parsing file: {error}")
         return jsonify({"error": error}), 400
 
-    rules = load_rules()  # Load rules here
-    issues = scan_file(content, rules)  # Pass rules to scan_file
-    return jsonify({"issues": issues}), 200
+    rules = load_rules()
+    try:
+        findings = scan_file(content, rules)
+        log_findings(findings)
+    except Exception as e:
+        logging.error(f"Error during file scan: {str(e)}")
+        return jsonify({"error": "An error occurred during scanning"}), 500
+
+    return jsonify({"issues": findings}), 200
+
 
 def scan_file_recursive(file_data, rules):
     findings = []
@@ -113,10 +149,14 @@ def scan_file_recursive(file_data, rules):
     def recursive_scan(data):
         if isinstance(data, dict):
             for key, value in data.items():
-                findings.extend(recursive_scan(value))  # recursive call for nested dicts
+                findings.extend(
+                    recursive_scan(value)
+                )  # recursive call for nested dicts
         elif isinstance(data, list):
             for item in data:
-                findings.extend(recursive_scan(item))  # recursive call for items in lists
+                findings.extend(
+                    recursive_scan(item)
+                )  # recursive call for items in lists
         else:
             for rule in rules:
                 match_key = rule["match_key"]
@@ -133,5 +173,3 @@ def scan_file_recursive(file_data, rules):
     findings.extend(recursive_scan(file_data))
     print(f"Findings during recursive scan: {findings}")  # Debugging output
     return findings
-
-
