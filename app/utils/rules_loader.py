@@ -1,6 +1,7 @@
 import json
 import os
 
+
 def load_rules():
     rules_file = os.path.join("data", "rules.json")
     if not os.path.exists(rules_file):
