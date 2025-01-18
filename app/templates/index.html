@@ -4,17 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecureConfigAI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>SecureConfigAI</h1>
-    <p>Upload your configuration file to scan for vulnerabilities.</p>
-    <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".env,.yaml,.json" required>
-        <button type="submit">Scan</button>
-    </form>
-    {% if error %}
-    <p style="color: red;">{{ error }}</p>
-    {% endif %}
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">SecureConfigAI</a>
+    </nav>
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Status Area -->
+            <div class="col-md-12 mb-4">
+                <h4>Scan Status</h4>
+                <p><strong>Last Scanned File:</strong> example.env</p>
+                <p><strong>Scan Date:</strong> Jan 17, 2025</p>
+                <p><strong>Issues Found:</strong> Critical: 2, High: 1</p>
+            </div>
+        </div>
+        <div class="row">
+            <!-- File Upload -->
+            <div class="col-md-6">
+                <h4>Upload File</h4>
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Select a file to scan:</label>
+                        <input type="file" name="file" id="file" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+            <!-- Scan Results -->
+            <div class="col-md-6">
+                <h4>Scan Results</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Rule ID</th>
+                            <th>Description</th>
+                            <th>Severity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>R001</td>
+                            <td>Debug mode is enabled.</td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>R002</td>
+                            <td>Weak password detected.</td>
+                            <td>Critical</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <footer class="text-center mt-4">
+        <p>&copy; 2025 SecureConfigAI</p>
+    </footer>
 </body>
 </html>
