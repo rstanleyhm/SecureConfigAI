@@ -4,15 +4,17 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
 import redis
 import threading
-import time
-from app.utils.rules_loader import load_rules
-from app.utils.scan_helpers import parse_file, scan_file
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from utils.rules_loader import load_rules
+from utils.scan_helpers import parse_file, scan_file
+
+print("PYTHONPATH:", sys.path)
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = {'env', 'yaml', 'json'}
 
 # Redis setup
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+redis_client = redis.Redis(host='redis', port=6379, db=0)
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -69,4 +71,4 @@ thread = threading.Thread(target=process_file_subscriber, daemon=True)
 thread.start()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
